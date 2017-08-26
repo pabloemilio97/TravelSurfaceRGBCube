@@ -1,0 +1,42 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: Helvetica;
+
+}
+
+.all {
+    display: block;
+	text-align: center;
+	vertical-align: middle;
+}
+	
+.title{
+	background-color: #000;
+	height: 7em;
+	color: #FFF;
+	font-size: 5em;
+}
+
+.titletext{
+	line-height: 400%;
+}
+	
+.information {
+	background-color: #AAA;
+	height: 3.2em;
+	line-height: 400%;
+	color: ;
+	font-size: 2em;
+}
+
+#btn {
+	background-color: #AAA;
+	color: ;
+	font-size: 1em;
+}
+
+#btn: hover{
+	background-color: #999
+}

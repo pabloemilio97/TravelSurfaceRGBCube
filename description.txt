@@ -1,0 +1,1 @@
+This is my first website. It changes the background color around the color wheel, and the bottom part of the site according to the main color's complementary color (using two's complement). 
