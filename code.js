@@ -1,19 +1,22 @@
-var factors = new Array();
+//global variables
 var firstMove = true;
+var isFinished = false;
 var currColor = "#ff0000";
 var initHex = 0xFF0000;
-//Total number of times colors are changed
-var counter = 0;
+var stringMat = "";
+//total number of times colors are changed
+var numChanges = 0;
 //interval per side of the RGB color cube
 var n = 3;
 //number of movement on the side of the cube
 var numberMovement = n + 1;
-//Create matrix that has values of repetitions needed to be made per algorithm
+//create matrix that has values of repetitions needed to be made per side of the RGB cube
 var matrix = new Array(6);
 for (let i = 0; i < 6; i++){
   matrix[i] = new Array(n + 1);
-  for(let j = 0; numberMovement > -1; j++, numberMovement--){
+  for(let j = 0; j < n + 1; j++, numberMovement--){
   	matrix[i][j] = numberMovement;
+    stringMat = stringMat + matrix[i][j].toString() + " ";
   }
   if(i === 4){
   	numberMovement = n - 1;
@@ -21,24 +24,32 @@ for (let i = 0; i < 6; i++){
   else{
   	numberMovement = n;
   }
+  stringMat = stringMat + "\n";
 }
-//asign 0 value to right inferior corner
-matrix[5][n] = 0;
+//if n = 3, the matrix will have these values
+/*4 3 2 1 
+  3 2 1 0
+  3 2 1 0
+  3 2 1 0
+  3 2 1 0
+  2 1 0 -1*/
+//indexes for matrix
+var round = 0; //represents how many times the path has traveled through the cube. works as column num in matrix
+var side = 0; //side of the cube. determines what operation has to be taken to the color. works as row num in matrix.
+//counter for repetitions needed per face of the cube
+var repCounter = 0;
 
-function getFactors(number){
-  //for(let i = 0; )
-}
-function nearestFactor(numberToConvert, factorNumber){
-
-}
+//for determining complementary color
 function getComplementary(hex){
 	let intHex = stringToIntHex(hex);
 	let complementary = (0xFFFFFF ^ intHex);
 	return intToStringHex(complementary);
 }
+
 function stringToIntHex(hex){
 	return parseInt(hex.replace(/^#/, ''), 16);
 }
+
 function intToStringHex(hex){
 	let stringHex = hex.toString(16);
 	let numZeroes = 6 - stringHex.length;
@@ -53,6 +64,8 @@ function intToStringHex(hex){
 	}
 
 }
+
+//Aids intToStringHex when working with zeroes
 function repeatDigit(digit, reps){
 	let digits = "";
 	for(let i = 0; i < reps; i++){
@@ -60,6 +73,8 @@ function repeatDigit(digit, reps){
 	}
 	return digits;
 }
+
+//change style values
 function assignValues(){
 	//Change value of current color and set the main background to it
 	document.getElementById("title").style.backgroundColor = currColor;
@@ -73,109 +88,77 @@ function assignValues(){
 	//Change text to display current colors
 	document.getElementById("titletext").innerHTML = currColor;
 	document.getElementById("info").innerHTML = getComplementary(currColor);
-  counter++;
+  numChanges++;
 }
-function changeColor(hex, side, round, reps){
+
+//does the arithmetic operations for changing color, depending on which face of the cube it is in
+function changeColor(hex, side){
 	let intColor = stringToIntHex(hex); //string changed to int, placeholder
-	//let newColor; //placeholder
 	switch(side){
 		case 0:
-			for(let i = 0; i < reps; i++){
-        //alert("m");
-        //setTimeout(function(){
-          if(firstMove){
-            //assignValues();
-            //alert("Side: " + side);
-            firstMove = false;
-          }
-          else{
-            if(round === n){
-              intColor = 0xFFFFFF;
-            }
-            else{
-              intColor = intColor + 0xFF / n; // add blue
-            }
-    				currColor = intToStringHex(Math.floor(intColor));
-            assignValues();
-            //alert("Side: " + side);
-          }
-        //}, 500);
-      }
-			 break;
+        if(firstMove){
+          assignValues();
+          firstMove = false;
+        }
+        else{
+          intColor = intColor + 0xFF / n; // add blue
+          currColor = intToStringHex(Math.floor(intColor));
+          assignValues();
+        }
+        repCounter++;
+			break;
     case 1:
-    	for(let i = 0; i < reps; i++){
-        //setTimeout(function(){
-    			intColor = intColor - 0xFF0000 / n;// subtract red
-    			currColor = intToStringHex(Math.floor(intColor));
-    			assignValues();
-          //alert("Side: " + side);
-        //}, 500);
-      }
+        intColor = intColor - 0xFF0000 / n;// subtract red
+        currColor = intToStringHex(Math.floor(intColor));
+        assignValues();
+        repCounter++;
       break;
      case 2:
-     	for(let i = 0; i < reps; i++){
-        //setTimeout(function(){
-     			intColor = intColor + 0xFF00 / n; // add green
-     			currColor = intToStringHex(Math.floor(intColor));
-     			assignValues();
-          //alert("Side: " + side);
-        //}, 500);
-      }
+        intColor = intColor + 0xFF00 / n; // add green
+        currColor = intToStringHex(Math.floor(intColor));
+        assignValues();
+        repCounter++;
       break;
     case 3:
-    	for(let i = 0; i < reps; i++){
-        //setTimeout(function(){
-    			intColor = intColor - 0xFF / n; // subtract blue
-    			currColor = intToStringHex(Math.floor(intColor));
-    			assignValues();
-          //alert("Side: " + side);
-        //}, 500);
-      }
+        intColor = intColor - 0xFF / n; // subtract blue
+        currColor = intToStringHex(Math.floor(intColor));
+        assignValues();
+        repCounter++;
       break;
     case 4:
-    	for(let i = 0; i < reps; i++){
-        //setTimeout(function(){
-    			intColor = intColor + 0xFF0000 / n; // add red
-    			currColor = intToStringHex(Math.floor(intColor));
-    			assignValues();
-          //alert("Side: " + side);
-        //}, 500);
-      }
+        intColor = intColor + 0xFF0000 / n; // add red
+        currColor = intToStringHex(Math.floor(intColor));
+        assignValues();
+        repCounter++;
       break;
     case 5:
-      	for(let i = 0; i < reps; i++){
-        //setTimeout(function(){
-    			intColor = intColor - 0xFF00 / n; // subtract green
-    			currColor = intToStringHex(Math.floor(intColor));
-    			assignValues();
-          //alert("Side: " + side);
-        //}, 500);
-      }
+        intColor = intColor - 0xFF00 / n; // subtract green
+        currColor = intToStringHex(Math.floor(intColor));
+        assignValues();
+        repCounter++;
       break;
 	}
-/*
-	//Precautions
-	if(intColor > 0xFFFFFF){
-		newColor = 0xFFFFFF % intColor;
-		currColor = intToStringHex(newColor);
-		alert(currColor);
-	}
-	if (newColor < 0){
-		newColor = newColor * -1;
-		currColor = intToStringHex(newColor);
-	}
-	return intToStringHex(newColor);
-*/
 }
 
 function color(){
-  //document.getElementById('btn').remove();
-	//Access values on matrix column by column
-	for(let column = 0; column < (n + 1); column++){
-		for(let row = 0; row < 6; row++){
-			//Change value of current color and set the main background to it
-      changeColor(currColor, row, column, matrix[row][column]);
-		}
-	}
-  //alert(counter);
+  if(isFinished){
+    alert("Path finished, ended in white!");
+  }
+  else if(round < n + 1){
+    if(side < 6){
+      if(repCounter >= matrix[side][round]){ 
+        repCounter = 0;
+        side++;
+      }
+    }
+    if(side == 6){ 
+      side = 0;
+      round++;
+    }
+    if(round == n - 1 && side == 5){
+      side = 0;
+      isFinished = true;
+    }
+    changeColor(currColor, side);
+  }
 }
