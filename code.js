@@ -1,43 +1,60 @@
 //global variables
-var firstMove = true;
-var isFinished = false;
-var currColor = "#ff0000";
-var initHex = 0xFF0000;
-var stringMat = "";
+var isFirstMove;
+var isFinished;
+var currColor;
+var initHex;
+var stringMat;
+var round; //represents how many times the path has traveled through the cube. works as column num in matrix
+var side; //side of the cube. determines what operation has to be taken to the color. works as row num in matrix.
+//counter for repetitions needed per face of the cube
+var repCounter;
 //total number of times colors are changed
 var numChanges = 0;
-//interval per side of the RGB color cube
+// n to the second power determines how many colors per side of the cube
 var n = 3;
-//number of movement on the side of the cube
-var numberMovement = n + 1;
-//create matrix that has values of repetitions needed to be made per side of the RGB cube
-var matrix = new Array(6);
-for (let i = 0; i < 6; i++){
-  matrix[i] = new Array(n + 1);
-  for(let j = 0; j < n + 1; j++, numberMovement--){
-  	matrix[i][j] = numberMovement;
-    stringMat = stringMat + matrix[i][j].toString() + " ";
-  }
-  if(i === 4){
-  	numberMovement = n - 1;
-  }
-  else{
-  	numberMovement = n;
-  }
-  stringMat = stringMat + "\n";
+defineVars();
+
+//for redefining variables when n is changed and defining them for the first time
+function defineVars(){
+  isFirstMove = true;
+  isFinished = false;
+  currColor = "#ff0000";
+  initHex = 0xFF0000;
+  numberMovement = n + 1;
+  round = 0;
+  side = 0;
+  repCounter = 0;
+  defineMatrix();
 }
-//if n = 3, the matrix will have these values
-/*4 3 2 1 
-  3 2 1 0
-  3 2 1 0
-  3 2 1 0
-  3 2 1 0
-  2 1 0 -1*/
-//indexes for matrix
-var round = 0; //represents how many times the path has traveled through the cube. works as column num in matrix
-var side = 0; //side of the cube. determines what operation has to be taken to the color. works as row num in matrix.
-//counter for repetitions needed per face of the cube
-var repCounter = 0;
+
+//create matrix that has values of repetitions needed to be made per side of the RGB cube
+function defineMatrix(){
+  matrix = new Array(6);
+  for (let i = 0; i < 6; i++){
+    matrix[i] = new Array(n + 1);
+    for(let j = 0; j < n + 1; j++, numberMovement--){
+      matrix[i][j] = numberMovement;
+      //stringMat = stringMat + matrix[i][j].toString() + " ";
+    }
+    if(i === 4){
+      numberMovement = n - 1;
+    }
+    else{
+      numberMovement = n;
+    }
+    //stringMat = stringMat + "\n";
+  }
+}
+
+//for when n is redefined
+function changeN(){
+  do{
+      n = parseInt(window.prompt("Enter value for n (1 to 5)", ""), 10);
+      if(!(isNaN(n) || n > 5 || n < 1)){
+        defineVars();
+      }     
+  }while(isNaN(n) || n > 5 || n < 1);
+}
 
 //for determining complementary color
 function getComplementary(hex){
@@ -96,9 +113,9 @@ function changeColor(hex, side){
 	let intColor = stringToIntHex(hex); //string changed to int, placeholder
 	switch(side){
 		case 0:
-        if(firstMove){
+        if(isFirstMove){
           assignValues();
-          firstMove = false;
+          isFirstMove = false;
         }
         else{
           intColor = intColor + 0xFF / n; // add blue
