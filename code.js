@@ -49,11 +49,11 @@ function defineMatrix(){
 //for when n is redefined
 function changeN(){
   do{
-      n = parseInt(window.prompt("Enter value for n (1 to 5)", ""), 10);
-      if(!(isNaN(n) || n > 5 || n < 1)){
+      n = parseInt(window.prompt("Enter value for n (1, 3, or 5)", ""), 10);
+      if(!(isNaN(n) || n > 5 || n < 1 || n % 2 == 0)){
         defineVars();
       }     
-  }while(isNaN(n) || n > 5 || n < 1);
+  }while(isNaN(n) || n > 5 || n < 1 || n % 2 == 0);
 }
 
 //for determining complementary color
